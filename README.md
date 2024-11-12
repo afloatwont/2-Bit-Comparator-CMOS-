@@ -57,10 +57,9 @@ The SPICE netlist facilitates simulation in **WinSpice** for circuit functionali
 
 ```spice
 ***2 Bit Comparator***
-
 .model nmod nmos level=54 version=4.7
 .model pmod pmos level=54 version=4.7
-
+.ic v(13)=0 v(17)=0 v(20)=0
 * Inverter Subcircuit
 .subckt inverter in vdd out
 M1 out in 0 0 nmod w=100u l=10u
@@ -77,7 +76,96 @@ M4 out b vdd vdd pmod w=100u l=10u
 Xout out vdd output inverter
 .ends
 
-* Further details and the complete netlist can be found in the project documentation.
+* 3 i/p AND Gate Subcircuit
+.subckt and3 a b c output vdd
+M1 out a n1 n1 nmod w=100u l=10u
+M2 n1 b n2 n2 nmod w=100u l=10u
+M3 n2 c 0 0 nmod w=100u l=10u
+M4 out a vdd vdd pmod w=100u l=10u
+M5 out b vdd vdd pmod w=100u l=10u
+M6 out c vdd vdd pmod w=100u l=10u
+Xout out vdd output inverter
+.ends
+
+* NAND Gate Subcircuit
+.subckt nand2 a b out vdd
+M1 out a n1 n1 nmod w=100u l=10u
+M2 n1 b 0 0 nmod w=100u l=10u
+M3 out a vdd vdd pmod w=200u l=10u
+M4 out b vdd vdd pmod w=200u l=10u
+.ends
+
+* OR Gate Subcircuit
+.subckt or2 a b out vdd
+M1 n1 b 0 0 nmod w=100u l=10u
+M2 n1 a 0 0 nmod w=100u l=10u
+M3 n1 b n2 n2 pmod w=200u l=10u
+M4 n2 a vdd vdd pmod w=200u l=10u
+Xa_inv n1 vdd out inverter
+.ends
+
+* 3 i/p OR Gate Subcircuit
+.subckt or3 a b c out vdd
+M1 n1 b 0 0 nmod w=100u l=10u
+M2 n1 a 0 0 nmod w=100u l=10u
+M3 n1 c 0 0 nmod w=100u l=10u
+M4 n1 c n2 n2 pmod w=200u l=10u
+M5 n2 b n3 n3 pmod w=200u l=10u
+M6 n3 a vdd vdd pmod w=200u l=10u
+Xa_inv n1 vdd out inverter
+.ends
+
+* NOR Gate Subcircuit
+.subckt nor2 a b out vdd
+M1 out b 0 0 nmod w=100u l=10u
+M2 out a 0 0 nmod w=100u l=10u
+M3 out b n2 n2 pmod w=200u l=10u
+M4 n2 a vdd vdd pmod w=200u l=10u
+.ends
+
+.subckt xnor a b out ab bb vdd
+M1 out ab n1 n1 nmod w=100u l=10u
+M2 out a n2 n2 nmod w=100u l=10u
+M3 n1 b 0 0 nmod w=100u l=10u
+M4 n2 bb 0 0 nmod w=100u l=10u
+M5 out ab n3 n3 pmod w=200u l=10u
+M6 out b n3 n3 pmod w=200u l=10u
+M7 n3 a vdd vdd pmod w=200u l=10u
+M8 n3 bb vdd vdd pmod w=200u l=10u
+.model nmod nmos level=54 version=4.7
+.model pmod pmos level=54 version=4.7
+.ends
+
+vdd 9 0 dc 5v
+Va0 1 0 dc 0v
+Vb0 2 0 dc 0v
+Va1 3 0 dc 5v
+Vb1 4 0 dc 5v
+Xa0i 1 9 5 inverter
+Xb0i 2 9 6 inverter
+Xa1i 3 9 7 inverter
+Xb1i 4 9 8 inverter
+*a<b at 13*
+xalb 7 4 10 9 and2
+xallb 5 2 4 11 9 and3
+xalllb 2 5 7 12 9 and3
+xalessb 10 11 12 13 9 or3
+*a>b at 17*
+xagb 3 8 14 9 and2
+xaggb 1 3 6 15 9 and3
+xagggb 1 6 8 16 9 and3
+xagreatb 14 15 16 17 9 or3
+*a=b at 20*
+xaeb 3 4 18 7 8 9 xnor
+xaeeb 1 2 19 5 6 9 xnor
+xaequalb 18 19 20 9 and2
+
+.tran 0.1m 400m
+.control
+run
+plot v(13) v(17) v(20)
+.endc
+.end
 ```
 
 ## Simulation Files and Waveforms
