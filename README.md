@@ -7,7 +7,7 @@
 **A Project Report on: 2-bit Comparator Using CMOS**
 
 **Submitted By:**  
-[**Ayush Ambatkar (BT22ECI005)**](https://github.com/Ayush)
+[**Ayush Ambatkar (BT22ECI005)**](https://github.com/afloatwont)
 
 **Contributors:**  
 [**Jjateen Gundesha (BT22ECI002)**](https://github.com/Jjateen) – SPICE Netlist Creation
@@ -51,7 +51,7 @@ The comparator circuit receives two 2-bit binary inputs, `A (A1A0)` and `B (B1B0
     <img src="./images/logic_ckt.png" alt="Logic Circuit Diagram for 2-Bit Comparator">
 </div>
 
-## SPICE Netlist (Contributed by Jjateen Gundesha)
+## SPICE Netlist
 
 The SPICE netlist facilitates simulation in **WinSpice** for circuit functionality verification.
 
